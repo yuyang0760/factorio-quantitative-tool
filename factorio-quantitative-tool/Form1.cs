@@ -24,12 +24,62 @@ namespace factorio_quantitative_tool
         {
 
             // 读取配方
-            List<recipe> recipe_list = new List<recipe>();
-            recipe_list =readReipes("recipe.lua");
-
+            List<recipe> recipe_list = readReipes("recipe.lua");
+        
             // 读取汉化
+            Dictionary<string, string> hanhuaDic= readHanhua("base.cfg");
+
+            // 显示
+
+
+            for (int i = 0; i < recipe_list.Count; i++)
+            {
+
+                string recipe = "";
+
+              //  recipe += recipe_list[i].Name + "   ";
+                recipe += hanhuaDic[recipe_list[i].Name] + "   ";
+                Dictionary<string,int> d= recipe_list[i].Ingredients;
+                foreach (KeyValuePair<string ,int> item in d)
+                {
+                    // recipe += item.Key + item.Value + "  ";
+                    recipe += hanhuaDic[item.Key] + "="+item.Value + "  ";
+
+                }
+
+                listBox1.Items.Add(recipe);
+               // this.Text = listBox1.Items.Count.ToString();
+            }
 
         }
+
+        private Dictionary<string, string> readHanhua(string path)
+        {
+            StreamReader streamReader = new StreamReader(path, Encoding.UTF8);
+            Dictionary<string, string> hanhuaDic = new Dictionary<string, string>();
+            string text;
+        
+            while ((text = streamReader.ReadLine()) != null)
+            {
+                if (text.Contains('='))
+                {
+                    string[] array = text.Split(new char[]
+                            {
+                    '='
+                            });
+                    bool flag = array[0] != "";
+                    if (flag)
+                    {
+                        hanhuaDic[array[0]] =array[1];
+                    }
+                }
+        
+            }
+            streamReader.Close();
+
+            return hanhuaDic;
+        }
+
 
         private   List<recipe> readReipes(string path)
         {
